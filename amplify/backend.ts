@@ -14,6 +14,17 @@ const backend = defineBackend({});
 
 const customResourceStack = backend.createStack("MyCustomResources");
 
+const myVpc = new ec2.Vpc(customResourceStack, "testing-vpc", {
+  cidr: "10.0.0.0/16",
+  subnetConfiguration: [
+    {
+      cidrMask: 24,
+      name: "PrivateSubnet",
+      subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+    },
+  ],
+});
+
 const fn = new lambda.Function(customResourceStack, "helloWorldFunc", {
   runtime: lambda.Runtime.NODEJS_18_X,
   code: lambda.Code.fromInline(`
@@ -25,10 +36,8 @@ const fn = new lambda.Function(customResourceStack, "helloWorldFunc", {
         };
     `),
   handler: "index.handler",
-});
-fn.addFunctionUrl({
-  authType: lambda.FunctionUrlAuthType.NONE,
-});
-new ec2.Vpc(customResourceStack, "testing-vpc", {
-  cidr: "10.0.0.0/16",
+  vpc: myVpc,
+  vpcSubnets: {
+    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+  },
 });
