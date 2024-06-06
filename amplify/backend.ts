@@ -1,5 +1,5 @@
 import { defineBackend } from '@aws-amplify/backend';
-import * as sqs from 'aws-cdk-lib/aws-sqs'
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 // import { auth } from './auth/resource';
 // import { data } from './data/resource';
 
@@ -13,4 +13,6 @@ const backend = defineBackend({});
 
 const customResourceStack = backend.createStack('MyCustomResources');
 
-new sqs.Queue(customResourceStack, 'MyTestingSQSFromAmplify');
+new ec2.Vpc(customResourceStack, 'testing-vpc',{
+  cidr: '10.0.0.0/16',
+})
