@@ -1,7 +1,7 @@
 import { defineBackend } from "@aws-amplify/backend";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
 // import { auth } from './auth/resource';
 // import { data } from './data/resource';
 
@@ -43,10 +43,10 @@ const customResourceStack = backend.createStack("MyCustomResources");
 //   },
 // });
 
-const myLambda = new lambda.Function(customResourceStack, 'myLambda', {
-    runtime: lambda.Runtime.NODEJS_18_X,
-    handler: 'index.handler',
-    code: lambda.Code.fromInline(`
+const myLambda = new lambda.Function(customResourceStack, "myLambda", {
+  runtime: lambda.Runtime.NODEJS_18_X,
+  handler: "index.handler",
+  code: lambda.Code.fromInline(`
     exports.handler = async (event) => {
           return {
             statusCode: 200,
@@ -54,9 +54,13 @@ const myLambda = new lambda.Function(customResourceStack, 'myLambda', {
           };
         };
     `),
-})
-
-const api = new apigateway.RestApi(customResourceStack, 'MyApiGateway', {
-  restApiName: 'My Service',
-  description: 'This service serves my Lambda function.',
 });
+
+const api = new apigateway.RestApi(customResourceStack, "MyApiGateway", {
+  restApiName: "My Service",
+  description: "This service serves my Lambda function.",
+});
+
+const lambdaIntegration = new apigateway.LambdaIntegration(myLambda);
+const resource = api.root.addResource("hello");
+resource.addMethod("GET", lambdaIntegration); // GET /hello
