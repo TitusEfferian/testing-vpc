@@ -2,6 +2,8 @@ import { defineBackend } from "@aws-amplify/backend";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 // import { auth } from './auth/resource';
 // import { data } from './data/resource';
 
@@ -13,7 +15,7 @@ const backend = defineBackend({});
 // this is aws amplify gen 2
 // how can i spawn a new vpc using aws cdk here?
 
-const customResourceStack = backend.createStack("MyCustomResources");
+// const customResourceStack = backend.createStack("MyCustomResources");
 
 // const myVpc = new ec2.Vpc(customResourceStack, "testing-vpc", {
 //   cidr: "10.0.0.0/16",
@@ -43,26 +45,49 @@ const customResourceStack = backend.createStack("MyCustomResources");
 //   },
 // });
 
-const myLambda = new lambda.Function(customResourceStack, "myLambda", {
-  runtime: lambda.Runtime.NODEJS_18_X,
-  handler: "index.handler",
-  code: lambda.Code.fromInline(`
-    exports.handler = async (event) => {
-          return {
-            statusCode: 200,
-            body: JSON.stringify('Hello, World!'),
-          };
-        };
-    `),
-});
+// const myLambda = new lambda.Function(customResourceStack, "myLambda", {
+//   runtime: lambda.Runtime.NODEJS_18_X,
+//   handler: "index.handler",
+//   code: lambda.Code.fromInline(`
+//     exports.handler = async (event) => {
+//           return {
+//             statusCode: 200,
+//             body: JSON.stringify('Hello, World!'),
+//           };
+//         };
+//     `),
+// });
 
-const api = new apigateway.RestApi(customResourceStack, "MyApiGateway", {
-  restApiName: "My Service",
-  description: "This service serves my Lambda function.",
-});
+// const api = new apigateway.RestApi(customResourceStack, "MyApiGateway", {
+//   restApiName: "My Service",
+//   description: "This service serves my Lambda function.",
+// });
 
-const lambdaIntegration = new apigateway.LambdaIntegration(myLambda,{
-  allowTestInvoke: false
-});
-const resource = api.root.addResource("hello");
-resource.addMethod("GET", lambdaIntegration); // GET /hello
+// const lambdaIntegration = new apigateway.LambdaIntegration(myLambda, {
+//   allowTestInvoke: false,
+// });
+// const resource = api.root.addResource("hello");
+// resource.addMethod("GET", lambdaIntegration); // GET /hello
+
+// try to spawn sagemaker
+
+// const sagemakerRole = new iam.Role(
+//   customResourceStack,
+//   "SageMakerExecutionRoleFromAmplify",
+//   {
+//     assumedBy: new iam.ServicePrincipal("sagemaker.amazonaws.com"),
+//     managedPolicies: [
+//       iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSageMakerFullAccess"),
+//       iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"),
+//     ],
+//   }
+// );
+
+// const sagemakerDomain = new sagemaker.CfnDomain(customResourceStack, 'MySageMakerDomain', {
+//   authMode: 'IAM',
+//   defaultUserSettings: {
+//     executionRole: sagemakerRole.roleArn
+//   },
+//   domainName: 'MySageMakerDomain',
+//   vpcId: 
+// });
