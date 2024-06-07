@@ -45,5 +45,12 @@ const customResourceStack = backend.createStack("MyCustomResources");
 const myLambda = new lambda.Function(customResourceStack, 'myLambda', {
     runtime: lambda.Runtime.NODEJS_18_X,
     handler: 'index.handler',
-    code: lambda.Code.fromAsset('lambda/index.js'),
+    code: lambda.Code.fromInline(`
+    exports.handler = async (event) => {
+          return {
+            statusCode: 200,
+            body: JSON.stringify('Hello, World!'),
+          };
+        };
+    `),
 })
