@@ -56,46 +56,13 @@ const myLambda = new lambda.Function(customResourceStack, "myLambda", {
     `),
 });
 
-// const api = new apigateway.RestApi(customResourceStack, "MyApiGateway", {
-//   restApiName: "My Service",
-//   description: "This service serves my Lambda function.",
-// });
-
-// const lambdaIntegration = new apigateway.LambdaIntegration(myLambda,{
-//   allowTestInvoke: false
-// });
-// const resource = api.root.addResource("hello");
-// resource.addMethod("GET", lambdaIntegration); // GET /hello
-
-/**
- * manual deployment
- */
-
-const api = new apigateway.RestApi(
-  customResourceStack,
-  "GatewayManualDeployment",
-  {
-    restApiName: "GatewayManualDeployment",
-
-    deploy: false,
-  }
-);
-
-const prodDeployment = new apigateway.Deployment(
-  customResourceStack,
-  "prodDeployment",
-  {
-    api,
-  }
-);
-
-// Manual Stage
-const prodStage = new apigateway.Stage(customResourceStack, "prodStage", {
-  deployment: prodDeployment,
+const api = new apigateway.RestApi(customResourceStack, "MyApiGateway", {
+  restApiName: "My Service",
+  description: "This service serves my Lambda function.",
 });
 
-const lambdaIntegration = new apigateway.LambdaIntegration(myLambda);
+const lambdaIntegration = new apigateway.LambdaIntegration(myLambda,{
+  allowTestInvoke: false
+});
 const resource = api.root.addResource("hello");
-resource.addMethod("GET", lambdaIntegration, {
-  operationName: "GetHelloWorld",
-});
+resource.addMethod("GET", lambdaIntegration); // GET /hello
