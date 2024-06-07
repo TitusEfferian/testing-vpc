@@ -1,6 +1,7 @@
 import { defineBackend } from "@aws-amplify/backend";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 // import { auth } from './auth/resource';
 // import { data } from './data/resource';
 
@@ -54,3 +55,8 @@ const myLambda = new lambda.Function(customResourceStack, 'myLambda', {
         };
     `),
 })
+
+const api = new apigateway.RestApi(customResourceStack, 'MyApiGateway', {
+  restApiName: 'My Service',
+  description: 'This service serves my Lambda function.',
+});
