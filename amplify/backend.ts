@@ -12,7 +12,7 @@ const backend = defineBackend({});
 // this is aws amplify gen 2
 // how can i spawn a new vpc using aws cdk here?
 
-// const customResourceStack = backend.createStack("MyCustomResources");
+const customResourceStack = backend.createStack("MyCustomResources");
 
 // const myVpc = new ec2.Vpc(customResourceStack, "testing-vpc", {
 //   cidr: "10.0.0.0/16",
@@ -41,3 +41,9 @@ const backend = defineBackend({});
 //     subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
 //   },
 // });
+
+const myLambda = new lambda.Function(customResourceStack, 'myLambda', {
+    runtime: lambda.Runtime.NODEJS_LATEST,
+    handler: 'index.handler',
+    code: lambda.Code.fromAsset('lambda'),
+})
